@@ -4,7 +4,7 @@ clear;
 echo "API One VPN - Iniciando instalação...";
 sleep 5;
 clear;
-apt-get install openvpn apache2 php-mysql mysql-server php-zip php unzip git wget sed curl -y;
+apt-get install network-manager apache2 php-mysql mysql-server php-zip php unzip git wget sed curl -y;
 apt install iptables cron certbot git screen htop net-tools nload speedtest-cli ipset unattended-upgrades whois gnupg ca-certificates lsb-release apt-transport-https ca-certificates software-properties-common -y;
 apt install dos2unix -y && apt install unzip && wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/sync/sync.zip && unzip sync.zip && chmod +x *.sh && dos2unix *.sh && rm -rf sync.zip;
 cd ~
