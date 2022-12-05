@@ -35,6 +35,7 @@ apt --fix-broken install;
 rm -rf *.deb;
 cd /root;
 clear;
+##mover pra dentro dos modos conexão
 echo "Instalando stunnel4...";
 sleep 5;
 apt install stunnel4 -y;
@@ -162,9 +163,10 @@ service cron reload;
 clear;
 #instala ovpn aqui
 cd /root;
+wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/openvpn-install.sh;
 chmod +x openvpn-install.sh;
 ./openvpn-install.sh;
-echo "Deseja instalar o proxy node (1), python (2) ou go (3)? (1,2 ou 3)"
+echo "OVPN: Deseja instalar o proxy node (1), python (2) ou go (3)? (1,2 ou 3)"
 read CONFIRMA
 case $CONFIRMA in 
     "1")
@@ -270,7 +272,7 @@ case $CONFIRMA in
     ;;
 esac
 
-echo "Deseja instalar o proxy node (1), python (2) ou go (3)? (1,2 ou 3)"
+echo "SSH: Deseja instalar o proxy node (1), python (2) ou go (3)? (1,2 ou 3)"
 read CONFIRMA
 case $CONFIRMA in 
     "1")
