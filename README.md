@@ -1,5 +1,5 @@
 # onevpn_api
-Basic script to configure vpn over ssh
+Basic script to configure vpn;
 
 sudo su;
 
