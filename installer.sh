@@ -4,14 +4,8 @@ clear;
 echo "API One VPN - Iniciando instalação...";
 sleep 5;
 clear;
-apt-get install network-manager apache2 php-mysql mysql-server php-zip php unzip git wget sed curl -y;
-apt install iptables cron certbot git screen htop net-tools nload speedtest-cli ipset unattended-upgrades whois gnupg ca-certificates lsb-release apt-transport-https ca-certificates software-properties-common -y;
+apt install screen network-manager iptables cron curl certbot git screen htop net-tools nload speedtest-cli ipset unattended-upgrades whois gnupg ca-certificates lsb-release apt-transport-https ca-certificates software-properties-common -y;
 apt install dos2unix -y && apt install unzip && wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/sync/sync.zip && unzip sync.zip && chmod +x *.sh && dos2unix *.sh && rm -rf sync.zip;
-cd ~
-curl -sL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh
-sudo bash nodesource_setup.sh
-sudo apt install nodejs -y;
-npm install -g bower;
 clear;
 #echo "Instalando docker...";
 #sleep 5;
@@ -64,10 +58,9 @@ clear;
 echo "Apache 2...";
 sleep 5;
 apt install apache2 -y;
+sudo apt install php libapache2-mod-php -y;
 cd /etc/apache2 && rm -rf ports.conf;
 wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines-api/ports.conf;
-cd /etc/apache2/sites-available && rm -rf 000-default.conf;
-wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines-api/000-default.conf;
 service apache2 restart;
 #clear;
 echo "Regras iptables...";
@@ -133,6 +126,18 @@ sleep 5;
 cd /etc/security;
 mv limits.conf limits.conf.bak;
 wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/others/limits.conf && chmod +x limits.conf;
+echo "Instalando fast...";
+cd /root
+sleep 5;
+wget https://github.com/ddo/fast/releases/download/v0.0.4/fast_linux_amd64;
+sudo install fast_linux_amd64 /usr/local/bin/fast;
+##OVPN
+set_ovpn () {
+clear;
+echo "Configurando dnstt...";
+sleep 5;
+sed -i "s;4321;1194;g" /etc/rc.local > /dev/null 2>&1
+sed -i "s;4321;1194;g" restartdns.sh > /dev/null 2>&1
 #CRONTAB
 echo "Configurando crontab...";
 sleep 5;
@@ -155,28 +160,27 @@ service cron reload;
 #echo "* * * * * /root/restartdrop.sh"	
 #echo "0 */12 * * * /sbin/reboot"
 clear;
-echo "Instalando fast...";
-cd /root
-sleep 5;
-wget https://github.com/ddo/fast/releases/download/v0.0.4/fast_linux_amd64;
-sudo install fast_linux_amd64 /usr/local/bin/fast;
-clear;
-echo "Aguarde...";
-sleep 5;
+#instala ovpn aqui
+cd /root;
+chmod +x openvpn-install.sh;
+./openvpn-install.sh;
 echo "Deseja instalar o proxy node (1), python (2) ou go (3)? (1,2 ou 3)"
 read CONFIRMA
-
 case $CONFIRMA in 
     "1")
      #NODE
     clear;
     echo "Instalando NodeJS...";
     sleep 5; 
+    cd ~
+    curl -sL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh
+    sudo bash nodesource_setup.sh
+    sudo apt install nodejs -y;
     cd /root;
     clear;
     echo "Instalando Proxy...";
     sleep 5;
-    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/wsproxy/proxy3.js;
+    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/wsproxy/ovpn/proxy3.js;
     clear;
     echo -e "netstat -tlpn | grep -w 80 > /dev/null || screen -dmS nodews node /root/proxy3.js" >> /etc/autostart;
     netstat -tlpn | grep -w 80 > /dev/null || screen -dmS nodews node /root/proxy3.js
@@ -190,8 +194,8 @@ case $CONFIRMA in
     sleep 5; 
     apt install python python3 -y;
     clear;
-    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/wsproxy/wsproxy.py
-    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/wsproxy/antcrashws.sh -O /bin/antcrashws.sh > /dev/null 2>&1
+    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/wsproxy/ovpn/wsproxy.py
+    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/wsproxy/ovpn/antcrashws.sh -O /bin/antcrashws.sh > /dev/null 2>&1
     chmod +x /bin/antcrashws.sh;
     echo -e "netstat -tlpn | grep -w 80 > /dev/null || screen -dmS wsproxy80 antcrashws.sh 80" >> /etc/autostart;
     netstat -tlpn | grep -w 80 > /dev/null || screen -dmS wsproxy80 antcrashws.sh 80
@@ -204,7 +208,7 @@ case $CONFIRMA in
     echo "Instalando Proxy Go...";
     sleep 5; 
     clear;
-    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/wsproxy/sshProxy -O /bin/sshProxy > /dev/null 2>&1
+    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/wsproxy/ovpn/sshProxy -O /bin/sshProxy > /dev/null 2>&1
     chmod +x /bin/sshProxy;
     echo -e "netstat -tlpn | grep -w 80 > /dev/null || screen -dmS goproxy sshProxy -addr :80 -dstAddr 127.0.0.1:1194 -custom_handshake "\"101 Switching protocols - "\" " >> /etc/autostart;
     netstat -tlpn | grep -w 80 > /dev/null || screen -dmS goproxy sshProxy -addr :80 -dstAddr 127.0.0.1:1194 -custom_handshake "101 Switching protocols - "
@@ -215,11 +219,132 @@ case $CONFIRMA in
         echo  "Opção inválida."
     ;;
 esac
+}
+##SSH
+set_ssh () {
+clear;
+echo "Configurando dnstt...";
+sleep 5;
+sed -i "s;4321;22;g" /etc/rc.local > /dev/null 2>&1
+sed -i "s;4321;22;g" restartdns.sh > /dev/null 2>&1
+#CRONTAB
+echo "Configurando crontab...";
+sleep 5;
+cd /etc;
+wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/others/autostart;
+chmod +x autostart;
+crontab -r >/dev/null 2>&1
+(
+	crontab -l 2>/dev/null
+	echo "@reboot /etc/autostart"
+	echo "* * * * * /etc/autostart"
+	echo "0 */24 * * * /root/restartdrop.sh"
+	echo "0 */6 * * * restartdns"
+	echo "*/30 * * * * /root/clear_caches.sh"
+	echo "0 */6 * * * /root/system_updates.sh"
+	
+) | crontab -
+service cron reload;
+#echo "*/6 * * * * systemctl restart systemd-resolved.service"
+#echo "* * * * * /root/restartdrop.sh"	
+#echo "0 */12 * * * /sbin/reboot"
 #BADVPN
 clear;
 echo "Aguarde...";
 sleep 5;
 clear;
+echo "Deseja instalar o badvpn? (s/n)"
+read CONFIRMA
+
+case $CONFIRMA in 
+    "s")
+        cd /root && wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/badvpn/badvpn-x.sh && chmod +x badvpn-x.sh && ./badvpn-x.sh;
+    ;;
+
+    "n")
+                 
+    ;;
+
+    *)
+        echo  "Opção inválida."
+    ;;
+esac
+
+echo "Deseja instalar o proxy node (1), python (2) ou go (3)? (1,2 ou 3)"
+read CONFIRMA
+case $CONFIRMA in 
+    "1")
+     #NODE
+    clear;
+    echo "Instalando NodeJS...";
+    sleep 5; 
+    cd ~
+    curl -sL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh
+    sudo bash nodesource_setup.sh
+    sudo apt install nodejs -y;
+    cd /root;
+    clear;
+    echo "Instalando Proxy...";
+    sleep 5;
+    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/wsproxy/ssh/proxy3.js;
+    clear;
+    echo -e "netstat -tlpn | grep -w 80 > /dev/null || screen -dmS nodews node /root/proxy3.js" >> /etc/autostart;
+    netstat -tlpn | grep -w 80 > /dev/null || screen -dmS nodews node /root/proxy3.js
+    ;;
+
+    "2")
+    #python
+    cd /root;
+    clear;
+    echo "Instalando Python...";
+    sleep 5; 
+    apt install python python3 -y;
+    clear;
+    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/wsproxy/ssh/wsproxy.py
+    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/wsproxy/ssh/antcrashws.sh -O /bin/antcrashws.sh > /dev/null 2>&1
+    chmod +x /bin/antcrashws.sh;
+    echo -e "netstat -tlpn | grep -w 80 > /dev/null || screen -dmS wsproxy80 antcrashws.sh 80" >> /etc/autostart;
+    netstat -tlpn | grep -w 80 > /dev/null || screen -dmS wsproxy80 antcrashws.sh 80
+                 
+    ;;
+    "3")
+    #proxygo
+    cd /root;
+    clear;
+    echo "Instalando Proxy Go...";
+    sleep 5; 
+    clear;
+    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/wsproxy/ssh/sshProxy -O /bin/sshProxy > /dev/null 2>&1
+    chmod +x /bin/sshProxy;
+    echo -e "netstat -tlpn | grep -w 80 > /dev/null || screen -dmS goproxy sshProxy -addr :80 -dstAddr 127.0.0.1:8080 -custom_handshake "\"101 Switching protocols - "\" " >> /etc/autostart;
+    netstat -tlpn | grep -w 80 > /dev/null || screen -dmS goproxy sshProxy -addr :80 -dstAddr 127.0.0.1:8080 -custom_handshake "101 Switching protocols - "
+                 
+    ;;
+
+    *)
+        echo  "Opção inválida."
+    ;;
+esac
+}
+clear;
+echo "Aguarde...";
+sleep 5;
+echo "Qual protocolo deseja usar (ovpn = 1, ssh = 2? (1/2)"
+read CONFIRMA
+
+case $CONFIRMA in 
+    "1")
+        set_ovpn
+    ;;
+
+    "2")
+        set_ssh       
+    ;;
+
+    *)
+        echo  "Opção inválida."
+    ;;
+esac
 ##FIM
 cd /root;
 clear;
@@ -233,26 +358,26 @@ cd /root && wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/oth
 apt autoremove -y && apt -f install -y && apt autoclean -y;
 clear;
 echo "API - Painel Admin";
-sleep 5;
-cd /root
-wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/openvpn-api.zip;
-unzip openvpn-api.zip;
-cd openvpn-api;
-chmod +x install.sh;
-./install.sh /var/www www-data www-data
-#sudo service docker restart;
-#docker-compose up -d;
+sleep 3;
+echo "Digite o token de API:"
+read TOKEN
+destdir=/root/token.api
+echo "$TOKEN" > "$destdir"
+cd /var/www/html;
+rm -rf index.html;
+wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines-api/api.php;
+wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines-api/index.php;
+chmod 777 *.php
+#cd /root/onevpn_api/ovpn-install;
+#docker-compose up -d
 clear;
 echo "Finalizando...";
-sleep 5;
 cd /root;
+sleep 5;
+service dropbear stop;
+service dropbear start;
 rm -rf installer.sh;
 rm -rf fast_linux_amd64;
-rm -rf openvpn-api.zip;
-rm -rf rm -rf openvpn-api;
-clear;
-systemctl start openvpn@server;
-chmod +x /etc/openvpn/update-resolv.sh;
 clear;
 echo "FIM!";
 sleep 5;
