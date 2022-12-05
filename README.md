@@ -1,4 +1,4 @@
-# clearssh
+# onevpn_api
 Basic script to configure vpn over ssh
 
 sudo su;
