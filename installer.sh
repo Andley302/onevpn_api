@@ -39,7 +39,7 @@ sleep 5;
 apt install apache2 -y;
 sudo apt install php libapache2-mod-php -y;
 cd /etc/apache2 && rm -rf ports.conf;
-wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines-api/ports.conf;
+wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines_api/ports.conf;
 service apache2 restart;
 #clear;
 echo "Regras iptables...";
@@ -387,8 +387,8 @@ destdir=/root/token.api
 echo "$TOKEN" > "$destdir"
 cd /var/www/html;
 rm -rf index.html;
-wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines-api/api.php;
-wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines-api/index.php;
+wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines_api/api.php;
+wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines_api/index.php;
 chmod 777 *.php
 #cd /root/onevpn_api/ovpn-install;
 #docker-compose up -d
