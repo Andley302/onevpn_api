@@ -34,28 +34,6 @@ dpkg -i *.deb;
 apt --fix-broken install;
 rm -rf *.deb;
 cd /root;
-clear;
-##mover pra dentro dos modos conexão
-echo "Instalando stunnel4...";
-sleep 5;
-apt install stunnel4 -y;
-cd /etc/stunnel;
-rm -rf stunnel.conf;
-wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/stunnel/stunnel.conf;
-sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
-clear;
-echo "Verificando certificados stunnel...";
-sleep 5;
-if [ -e cert.pem ]
-then
-    echo "Certificado já está instalado. Continuando...."
-else
-    echo "Baixando certificados..."
-    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/stunnel/cert.pem
-	wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/stunnel/key.pem
-fi
-service stunnel4 restart;
-clear;
 echo "Apache 2...";
 sleep 5;
 apt install apache2 -y;
@@ -134,6 +112,27 @@ wget https://github.com/ddo/fast/releases/download/v0.0.4/fast_linux_amd64;
 sudo install fast_linux_amd64 /usr/local/bin/fast;
 ##OVPN
 set_ovpn () {
+clear;
+##STUNNEL
+echo "Instalando stunnel4...";
+sleep 5;
+apt install stunnel4 -y;
+cd /etc/stunnel;
+rm -rf stunnel.conf;
+wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/stunnel/ovpn/stunnel.conf;
+sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
+clear;
+echo "Verificando certificados stunnel...";
+sleep 5;
+if [ -e cert.pem ]
+then
+    echo "Certificado já está instalado. Continuando...."
+else
+    echo "Baixando certificados..."
+    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/stunnel/cert.pem
+	wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/stunnel/key.pem
+fi
+service stunnel4 restart;
 clear;
 echo "Configurando dnstt...";
 sleep 5;
@@ -224,6 +223,27 @@ esac
 }
 ##SSH
 set_ssh () {
+clear;
+##STUNNEL
+echo "Instalando stunnel4...";
+sleep 5;
+apt install stunnel4 -y;
+cd /etc/stunnel;
+rm -rf stunnel.conf;
+wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/stunnel/ssh/stunnel.conf;
+sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
+clear;
+echo "Verificando certificados stunnel...";
+sleep 5;
+if [ -e cert.pem ]
+then
+    echo "Certificado já está instalado. Continuando...."
+else
+    echo "Baixando certificados..."
+    wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/stunnel/cert.pem
+	wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/stunnel/key.pem
+fi
+service stunnel4 restart;
 clear;
 echo "Configurando dnstt...";
 sleep 5;
