@@ -1,14 +1,14 @@
 <?php
 //ERROS PHP
-#error_reporting(E_ALL);
-#ini_set('display_errors', '1');
-
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 if (getAuthorizationHeader() != null && check_token() != false) {
 	//header('Content-Type: application/json; charset=utf-8');
 	$response["ssh"] = get_ssh_users();
 	$response["ovpn"] = count(get_ovpn_users());
 	$response["ram_usage"] = round(get_server_memory_usage());
 	$response["cpu_usage"] = round(get_server_cpu_usage());
+	$response["ovpn_cert"] = base64_encode(get_ovpn_cert());
 	//$response["others_info"] = get_server_info();
 	echo json_encode($response); 
 }else{
@@ -34,8 +34,6 @@ function getAuthorizationHeader(){
 	}
 	return $headers;
 }
-
-
 function get_ovpn_users() {
 
 	$fp = fsockopen("localhost", 5555, $errno, $errstr, 30);
@@ -84,6 +82,15 @@ function check_token(){
 		}
 	} else {
 		return false;
+	}
+}
+
+function get_ovpn_cert(){
+	$file_ovpn = "/root/onehostapps.ovpn";
+	if (file_exists($file_ovpn)) {
+		return file_get_contents($file_ovpn);
+	} else {
+		return null;
 	}
 }
 
