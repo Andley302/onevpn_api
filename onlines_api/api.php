@@ -1,7 +1,8 @@
 <?php
 //ERROS PHP
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+#error_reporting(E_ALL);
+#ini_set('display_errors', '1');
+
 if (getAuthorizationHeader() != null && check_token() != false) {
 	//header('Content-Type: application/json; charset=utf-8');
 	$response["ssh"] = get_ssh_users();

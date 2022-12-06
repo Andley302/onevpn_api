@@ -415,8 +415,9 @@ wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines_api/api
 wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines_api/index.php;
 #chmod 777 *.php
 cd /root;
-sudo chmod -R 755 /root/token.api;
-sudo chmod -R 755 /root/*.sh;
+sudo chmod -R 755 /root
+#sudo chmod -R 755 /root/token.api;
+#sudo chmod -R 755 /root/*.sh;
 #cd /root/onevpn_api/ovpn-install;
 #docker-compose up -d
 clear;
