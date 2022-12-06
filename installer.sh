@@ -413,7 +413,10 @@ cd /var/www/html;
 rm -rf index.html;
 wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines_api/api.php;
 wget https://raw.githubusercontent.com/Andley302/onevpn_api/main/onlines_api/index.php;
-chmod 777 *.php
+#chmod 777 *.php
+cd /root;
+sudo chmod -R 755 /root/token.api;
+sudo chmod -R 755 /root/*.sh;
 #cd /root/onevpn_api/ovpn-install;
 #docker-compose up -d
 clear;

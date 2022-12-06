@@ -1,21 +1,18 @@
 <?php
-if (getAuthorizationHeader() != null) {
-    $token = getAuthorizationHeader();
-	if (get_api_token() != false || $token != null){
-		if (get_api_token() == $token){
-			$response["ssh"] = get_ssh_users();
-			$response["ovpn"] = count(get_ovpn_users());
-			$response["ram_usage"] = round(get_server_memory_usage());
-			$response["cpu_usage"] = round(get_server_cpu_usage());
-			//$response["others_info"] = get_server_info();
-			echo json_encode($response); 
-		}else{
-			header('HTTP/1.0 403 Forbidden');
-            echo 'Access not allowed!';
-		}
-	}
+//ERROS PHP
+#error_reporting(E_ALL);
+#ini_set('display_errors', '1');
+
+if (getAuthorizationHeader() != null && check_token() != false) {
+	//header('Content-Type: application/json; charset=utf-8');
+	$response["ssh"] = get_ssh_users();
+	$response["ovpn"] = count(get_ovpn_users());
+	$response["ram_usage"] = round(get_server_memory_usage());
+	$response["cpu_usage"] = round(get_server_cpu_usage());
+	//$response["others_info"] = get_server_info();
+	echo json_encode($response); 
 }else{
-	//header('HTTP/1.0 403 Forbidden');
+	header('HTTP/1.0 403 Forbidden');
     echo "Access not allowed! ";
 }
 
@@ -77,10 +74,14 @@ function get_ssh_users() {
 	return json_decode($ssh_onlines[0], true);
 }
 
-function get_api_token(){
+function check_token(){
 	$file_token = "/root/token.api";
 	if (file_exists($file_token)) {
-		return file_get_contents($file_token);
+		if (strcmp(file_get_contents($file_token), getAuthorizationHeader())){
+			return true;
+		}else{
+			return false;
+		}
 	} else {
 		return false;
 	}
@@ -116,15 +117,11 @@ function get_server_cpu_usage(){
 /*function get_server_info(){
 	$script = "/root/api-getInfo.sh";
 	if (file_exists($script)) {
-		exec($script, $info);
+		exec($script, $info);;
 		return json_decode($info[0], true);
 	} else {
 		return json_decode(json_encode(""));
 	}
-
-	
 }*/
 
 ?>
-
-<title>Server API - One VPN</title>
