@@ -7,9 +7,9 @@ if (getAuthorizationHeader() != null && check_token() != false) {
 	//header('Content-Type: application/json; charset=utf-8');
 	$response["ssh"] = get_ssh_users();
 	$response["ovpn"] = count(get_ovpn_users());
-	$response["ram_usage"] = round(get_server_memory_usage());
-	$response["cpu_usage"] = round(get_server_cpu_usage());
-	$response["ovpn_cert"] = base64_encode(get_ovpn_cert());
+	//$response["ram_usage"] = round(get_server_memory_usage());
+	//$response["cpu_usage"] = round(get_server_cpu_usage());
+	//$response["ovpn_cert"] = base64_encode(get_ovpn_cert());
 	//$response["others_info"] = get_server_info();
 	echo json_encode($response); 
 }else{
